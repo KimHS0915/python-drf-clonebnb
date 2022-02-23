@@ -1,5 +1,5 @@
 from django.db import models
-from managers import CustomModelManager
+from .managers import CustomModelManager
 
 
 class AbstractTimeStampedModel(models.Model):

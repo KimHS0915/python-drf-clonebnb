@@ -5,7 +5,7 @@ from common.models import AbstractTimeStampedModel
 
 
 class AbstractItem(AbstractTimeStampedModel):
-    """ Abstract Item """
+    """ Abstract Item Definition """
 
     name = models.CharField(max_length=80)
 
