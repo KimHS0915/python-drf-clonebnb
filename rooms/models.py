@@ -85,3 +85,17 @@ class Room(AbstractTimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    def get_average_rating(self):
+        all_reviews = self.reviews.all()
+        if not all_reviews:
+            return ''
+        all_ratings = 0
+        for review in all_reviews:
+            all_ratings += review.rating_average()
+        return round(all_ratings / len(all_reviews), 2)
+
+    get_average_rating.short_description = 'Average'
+
+    class Meta:
+        ordering = ('-created',)

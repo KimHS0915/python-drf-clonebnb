@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.shortcuts import reverse
 
 class User(AbstractUser):
     """ Custom User Model Definition """
@@ -41,3 +41,4 @@ class User(AbstractUser):
     currency = models.CharField(
         'currency', choices=CURRENCY_CHOICES, max_length=3, blank=True)
     superhost = models.BooleanField('superhost', default=False)
+ 

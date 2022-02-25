@@ -22,3 +22,15 @@ class Review(AbstractTimeStampedModel):
         'users.User', related_name='reviews', on_delete=models.CASCADE)
     room = models.ForeignKey(
         'rooms.Room', related_name='reviews', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.review} - {self.room}'
+
+    def get_average_rating(self):
+        average = round(((
+            self.accuracy + self.communication + self.cleanliness 
+            + self.location + self.check_in + self.value
+        ) / 6), 1)
+        return average
+
+    get_average_rating.short_description = 'Average'
