@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.environ.get('DEBUG')))
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOST")]
 
 
 # Application definition
@@ -42,8 +42,8 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     'rest_framework',
-    'django-seed',
-    'django-countries',
+    'django_seed',
+    'django_countries',
 ]
 
 PROJECT_APPS = [
