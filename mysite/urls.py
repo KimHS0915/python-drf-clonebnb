@@ -18,10 +18,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('users/', include('users.urls', namespace='users')),
-    path('rooms/', include('rooms.urls', namespace='rooms')),
-    path('reviews/', include('reviews.urls', namespace='reviews')),
-    path('reservations/', include('reservations.urls', namespace='reservations')),
-    path('lists/', include('lists.urls', namespace='lists')),
-    path('conversations/', include('conversations.urls', namespace='conversations')),
+    path('api/v1/rooms/', include('rooms.urls')),
 ]

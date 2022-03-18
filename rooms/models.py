@@ -82,6 +82,8 @@ class Room(AbstractTimeStampedModel):
         "Facility", related_name='rooms', blank=True)
     house_rules = models.ManyToManyField(
         "HouseRule", related_name='rooms', blank=True)
+    lat = models.DecimalField(max_digits=10, decimal_places=6, null=True)
+    lng = models.DecimalField(max_digits=10, decimal_places=6, null=True)
 
     def __str__(self):
         return self.name
