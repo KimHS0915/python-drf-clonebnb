@@ -94,7 +94,7 @@ class Room(AbstractTimeStampedModel):
             return ''
         all_ratings = 0
         for review in all_reviews:
-            all_ratings += review.rating_average()
+            all_ratings += review.get_average_rating()
         return round(all_ratings / len(all_reviews), 2)
 
     get_average_rating.short_description = 'Average'
