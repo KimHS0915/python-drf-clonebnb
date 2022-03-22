@@ -26,10 +26,27 @@ class RoomListView(APIView):
 
 class RoomDetailView(APIView):
 
-    def get(self, request, pk):
+    def get_room(self, pk):
         try:
             room = Room.objects.get(pk=pk)
+            return room
+        except Room.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        room = self.get_room(pk)
+        if room is not None:
             serializer = ReadRoomSerializer(room)
             return Response(data=serializer.data)
-        except Room.DoesNotExist:
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, pk):
+        room = self.get_room(pk)
+        if room is not None:
+            if room.host != request.user and not request.user.is_superuser:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            room.delete()
+            return Response(status=status.HTTP_200_OK)
+        else:
             return Response(status=status.HTTP_404_NOT_FOUND)
