@@ -33,9 +33,31 @@ class WriteRoomSerializer(serializers.Serializer):
         return Room.objects.create(**validated_data)
 
     def validate(self, data):
-        check_in = data.get('check_in')
-        check_out = data.get('check_out')
+        if self.instance:
+            check_in = data.get('check_in', self.instance.check_in)
+            check_out = data.get('check_out', self.instance.check_out)
+        else:
+            check_in = data.get('check_in')
+            check_out = data.get('check_out')
         if check_in == check_out:
             raise serializers.ValidationError('Not enough time between changes')
-        else:
-            return data
+        return data
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.country = validated_data.get('country', instance.country)
+        instance.city = validated_data.get('city', instance.city)
+        instance.price = validated_data.get('price', instance.price)
+        instance.address = validated_data.get('address', instance.address)
+        instance.guests = validated_data.get('guests', instance.guests)
+        instance.beds = validated_data.get('beds', instance.beds)
+        instance.bedrooms = validated_data.get('bedrooms', instance.bedrooms)
+        instance.baths = validated_data.get('baths', instance.baths)
+        instance.check_in = validated_data.get('check_in', instance.check_in)
+        instance.check_out = validated_data.get('check_out', instance.check_out)
+        instance.instant_book = validated_data.get('instant_book', instance.instant_book)
+        instance.lat = validated_data.get('lat', instance.lat)
+        instance.lng = validated_data.get('lng', instance.lng)
+        instance.save()
+        return instance
