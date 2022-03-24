@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from users.serializers import UserSerializer
+from users.serializers import RelatedUserSerializer
 from django_countries.serializer_fields import CountryField
 from .models import Room
 
 class ReadRoomSerializer(serializers.ModelSerializer):
 
-    host = UserSerializer()
+    host = RelatedUserSerializer()
     class Meta:
         model = Room
         fields = '__all__'
