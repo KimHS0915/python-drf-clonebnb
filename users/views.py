@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import User
-from .serializers import ReadUserSerializer, WriteUserSerializer
+from .serializers import UserSerializer
 
 
 class MeView(APIView):
@@ -11,11 +11,11 @@ class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        serializer = ReadUserSerializer(request.user)
+        serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
     def put(self, request):
-        serializer = WriteUserSerializer(request.user, data=request.data, partial=True)
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -29,7 +29,7 @@ class UserDetailView(APIView):
         try:
             pk = self.kwargs['pk']
             user = User.objects.get(pk=pk)
-            serializer = ReadUserSerializer(user)
+            serializer = UserSerializer(user)
             return Response(serializer.data)
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
