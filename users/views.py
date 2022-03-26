@@ -1,3 +1,6 @@
+import jwt
+from django.conf import settings
+from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -6,7 +9,7 @@ from .models import User
 from .serializers import UserSerializer
 
 
-class UserView(APIView):
+class UserSignupView(APIView):
     
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -15,6 +18,21 @@ class UserView(APIView):
             return Response(UserSerializer(new_user).data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserLoginView(APIView):
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        if not username or not password:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            encoded_jwt = jwt.encode({'pk': user.pk}, settings.SECRET_KEY, algorithm='HS256')
+            return Response(data={'token': encoded_jwt})
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class MeView(APIView):
