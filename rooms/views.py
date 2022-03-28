@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from .models import Room
 from .serializers import RoomSerializer
 
@@ -8,9 +9,12 @@ from .serializers import RoomSerializer
 class RoomListView(APIView):
 
     def get(self, request):
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
         rooms = Room.objects.all()
-        serializer = RoomSerializer(rooms, many=True)
-        return Response(data=serializer.data)
+        results = paginator.paginate_queryset(rooms, request)
+        serializer = RoomSerializer(results, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         if not request.user.is_authenticated:
