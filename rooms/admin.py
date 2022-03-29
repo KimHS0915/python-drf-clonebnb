@@ -23,6 +23,8 @@ class RoomAdmin(admin.ModelAdmin):
                 'address',
                 'price',
                 'room_type',
+                'latitude',
+                'longitude',
             ),
         }),
         ('Times', {

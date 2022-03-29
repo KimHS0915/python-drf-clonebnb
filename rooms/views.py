@@ -85,6 +85,8 @@ class RoomSearchView(APIView):
         min_bedrooms = request.GET.get('min_bedrooms', None)
         max_baths = request.GET.get('max_baths', None)
         min_baths = request.GET.get('min_baths', None)
+        latitude = request.GET.get('latitude', None)
+        longitude = request.GET.get('longitude', None)
         filter_kwargs = {}
         if country is not None:
             filter_kwargs['country'] = country
@@ -110,6 +112,11 @@ class RoomSearchView(APIView):
             filter_kwargs['baths__lte'] = max_baths
         if min_baths is not None:
             filter_kwargs['baths__gte'] = min_baths
+        if latitude is not None and longitude is not None:
+            filter_kwargs['latitude__lte'] = float(latitude) + 0.005
+            filter_kwargs['latitude__gte'] = float(latitude) - 0.005
+            filter_kwargs['longitude__lte'] = float(longitude) + 0.005
+            filter_kwargs['longitude__gte'] = float(longitude) - 0.005
         paginator = PageNumberPagination()
         paginator.page_size = 10
         try:
