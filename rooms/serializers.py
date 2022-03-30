@@ -7,6 +7,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
     host = UserSerializer()
     is_fav = serializers.SerializerMethodField()
+
     class Meta:
         model = Room
         fields = '__all__'
@@ -29,3 +30,4 @@ class RoomSerializer(serializers.ModelSerializer):
             lst = List.objects.get(user=user)
             return obj in lst.rooms.all()
         return False
+       
