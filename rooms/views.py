@@ -13,7 +13,7 @@ class RoomListView(APIView):
         paginator.page_size = 10
         rooms = Room.objects.all()
         results = paginator.paginate_queryset(rooms, request)
-        serializer = RoomSerializer(results, many=True)
+        serializer = RoomSerializer(results, many=True, context={'user': request.user})
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
@@ -40,7 +40,7 @@ class RoomDetailView(APIView):
     def get(self, request, pk):
         room = self.get_room(pk)
         if room is not None:
-            serializer = RoomSerializer(room)
+            serializer = RoomSerializer(room, context={'user': request.user})
             return Response(data=serializer.data)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
