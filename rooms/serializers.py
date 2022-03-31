@@ -5,12 +5,12 @@ from .models import Room
 
 class RoomSerializer(serializers.ModelSerializer):
 
-    host = UserSerializer()
+    host = UserSerializer(read_only=True)
     is_fav = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
-        fields = '__all__'
+        exclude = ('amenities', 'room_type', 'facilities', 'house_rules')
         read_only_fields = ('host', 'id', 'created', 'updated')
 
     def validate(self, data):
@@ -30,4 +30,8 @@ class RoomSerializer(serializers.ModelSerializer):
             lst = List.objects.get(user=user)
             return obj in lst.rooms.all()
         return False
-       
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        room = Room.objects.create(**validated_data, host=request.user)
+        return room
