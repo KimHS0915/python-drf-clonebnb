@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from users.serializers import UserSerializer
 from lists.models import List
-from .models import Room, RoomType, Amenity, Facility, HouseRule
+from .models import Room, RoomType, Amenity, Facility, HouseRule, Photo
 
 
 class RoomTypeSerializer(serializers.ModelSerializer):
@@ -32,6 +32,13 @@ class HouseRuleSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class PhotoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Photo
+        exclude = ("room",)
+
+
 class RoomSerializer(serializers.ModelSerializer):
 
     host = UserSerializer(read_only=True)
@@ -39,6 +46,7 @@ class RoomSerializer(serializers.ModelSerializer):
     amenities = AmenitySerializer(read_only=True, many=True, required=False)
     facilities = FacilitySerializer(read_only=True, many=True, required=False)
     house_rules = HouseRuleSerializer(read_only=True, many=True, required=False)
+    photos = PhotoSerializer(read_only=True, many=True, required=False)
     is_fav = serializers.SerializerMethodField()
 
     class Meta:
@@ -68,3 +76,5 @@ class RoomSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         room = Room.objects.create(**validated_data, host=request.user)
         return room
+
+
