@@ -43,7 +43,6 @@ class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        # exclude = ('amenities', 'room_type', 'facilities', 'house_rules')
         fields = '__all__'
         read_only_fields = ('host', 'id', 'created', 'updated')
 
