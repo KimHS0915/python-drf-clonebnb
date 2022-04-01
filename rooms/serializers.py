@@ -1,16 +1,50 @@
 from rest_framework import serializers
 from users.serializers import UserSerializer
 from lists.models import List
-from .models import Room
+from .models import Room, RoomType, Amenity, Facility, HouseRule
+
+
+class RoomTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RoomType
+        fields = ('id', 'name')
+
+
+class AmenitySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Amenity
+        fields = ('id', 'name')
+
+
+class FacilitySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Facility
+        fields = ('id', 'name')
+
+
+class HouseRuleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = HouseRule
+        fields = ('id', 'name')
+
 
 class RoomSerializer(serializers.ModelSerializer):
 
     host = UserSerializer(read_only=True)
+    room_type = RoomTypeSerializer(read_only=True, required=False)
+    amenities = AmenitySerializer(read_only=True, many=True, required=False)
+    facilities = FacilitySerializer(read_only=True, many=True, required=False)
+    house_rules = HouseRuleSerializer(read_only=True, many=True, required=False)
     is_fav = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
-        exclude = ('amenities', 'room_type', 'facilities', 'house_rules')
+        # exclude = ('amenities', 'room_type', 'facilities', 'house_rules')
+        fields = '__all__'
         read_only_fields = ('host', 'id', 'created', 'updated')
 
     def validate(self, data):
