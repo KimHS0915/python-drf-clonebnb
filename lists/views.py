@@ -18,12 +18,10 @@ class ListView(APIView):
 
     def put(self, request):
         pk = request.data.get('pk', None)
-        user = request.user
         if pk is not None:
             try:
                 lst = List.objects.get(user=request.user)
                 room = Room.objects.get(pk=pk)
-                print(lst.rooms.all())
                 if room in lst.rooms.all():
                     lst.rooms.remove(room)
                 else:

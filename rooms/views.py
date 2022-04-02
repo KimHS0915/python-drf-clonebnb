@@ -15,13 +15,10 @@ class RoomViewSet(ModelViewSet):
         
         if self.action == 'list' or self.action == 'retrieve':
             permission_classes = [permissions.AllowAny]
-
         elif self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated]
-        
+            permission_classes = [permissions.IsAuthenticated]        
         else:
             permission_classes = [IsUserRoom]
-        
         return [permission() for permission in permission_classes]
 
     @action(detail=False)
