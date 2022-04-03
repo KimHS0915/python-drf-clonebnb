@@ -1,8 +1,9 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 from . import views
 
 app_name = 'lists'
 
-urlpatterns = [
-    path('', views.ListView.as_view()),
-]
+router = DefaultRouter()
+router.register('', views.ListViewSet)
+
+urlpatterns = router.urls

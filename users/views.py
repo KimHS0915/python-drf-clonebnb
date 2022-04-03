@@ -6,9 +6,13 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from rooms.models import Room
+from lists.models import List
+from lists.serializers import ListSerializer
 from .models import User
 from .serializers import UserSerializer
 from .permissions import IsSelf
+
 
 class UserViewSet(ModelViewSet):
 
@@ -16,10 +20,9 @@ class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        permission_classes = []
         if self.action == 'list':
             permission_classes = [IsAdminUser]
-        elif self.action == 'create' or self.action == 'retrieve':
+        elif self.action == 'create' or self.action == 'retrieve' or self.action == 'favs':
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsSelf]       
@@ -42,3 +45,27 @@ class UserViewSet(ModelViewSet):
     def me(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
+    @action(detail=True)
+    def favs(self, request, pk):
+        user = self.get_object()
+        favs = List.objects.get(user=user)
+        serializer = ListSerializer(favs)
+        return Response(serializer.data)
+
+    @favs.mapping.put
+    def toggle_favs(self, request, pk):
+        user_pk = pk
+        room_pk = request.data.get('pk', None)
+        if room_pk is not None:
+            try:
+                favs = List.objects.get(user=user_pk)
+                room = Room.objects.get(pk=room_pk)
+                if room in favs.rooms.all():
+                    favs.rooms.remove(room)
+                else:
+                    favs.rooms.add(room)
+                return Response()
+            except Room.DoesNotExist:
+                pass
+        return Response(status=status.HTTP_400_BAD_REQUEST)
