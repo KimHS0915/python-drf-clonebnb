@@ -11,6 +11,11 @@ class RoomViewSet(ModelViewSet):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({'user': self.request.user})
+        return context
+
     def get_permissions(self):
         
         if self.action == 'list' or self.action == 'retrieve':
