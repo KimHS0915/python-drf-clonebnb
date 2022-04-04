@@ -1,7 +1,11 @@
+from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
-from rooms.permissions import IsUserRoom
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from reservations.models import Reservation
+from reservations.serializers import ReservationSerializer
+from .permissions import IsUserRoom
 from .models import Room
 from .serializers import RoomSerializer
 
@@ -19,9 +23,9 @@ class RoomViewSet(ModelViewSet):
     def get_permissions(self):
         
         if self.action == 'list' or self.action == 'retrieve':
-            permission_classes = [permissions.AllowAny]
+            permission_classes = [AllowAny]
         elif self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated]        
+            permission_classes = [IsAuthenticated]        
         else:
             permission_classes = [IsUserRoom]
         return [permission() for permission in permission_classes]
@@ -79,4 +83,16 @@ class RoomViewSet(ModelViewSet):
             rooms = Room.objects.all()
         results = paginator.paginate_queryset(rooms, request)
         serializer = RoomSerializer(results, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    @action(detail=True, methods=['GET'])
+    def reservations(self, request, pk):
+        try:
+            room = Room.objects.get(pk=pk)
+            reservations = Reservation.objects.filter(room=room)
+        except Room.DoesNotExist or Reservation.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        paginator = self.paginator
+        results = paginator.paginate_queryset(reservations, request)
+        serializer = ReservationSerializer(results, many=True)
         return paginator.get_paginated_response(serializer.data)
